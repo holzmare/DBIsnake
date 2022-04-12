@@ -4,6 +4,9 @@ const DBIBLUE = "#1E345A";
 const DBIWHITE = "#FFFFFF"; //TODO checken ob es wirklich FFFFFF ist
 const GRIDSIZE = 20;
 const BGCOLOR = DBIBLUE;
+const INITSPEED = 500;
+const SPEEDUP = 1.05;
+const SPEEDLIMIT = 50;
 
 function mod(num, div) {
     return ((num%div)+div)%div;
@@ -13,15 +16,16 @@ var snake;
 
 var key = "no";
 
+var tickrate = INITSPEED;
+
 async function main(){
     field.initBG();
     snake = new Snake(3);
     document.addEventListener("keydown", this.keyDownHandler, false);
-    snake.renderBody(field);
     while(true){
-        await sleep(250);
-        snake.move(key);
         snake.renderBody(field);
+        await sleep(tickrate);
+        snake.move(key);
     }
 }   
 
@@ -101,7 +105,7 @@ class Snake {
     * @description Schlangenbewegung
     * @param {char} dir : r,l -> lenken
     */
-   move(dir = this.turn){
+   move(dir){
        if (dir == "l"){
            this.heading = {x: this.heading.y, y: -this.heading.x}
        }
@@ -123,8 +127,12 @@ class Snake {
         else if (!this.collides(this.food, this.body[0])) {
             field.renderSegment(this.body.pop(), BGCOLOR); //Canvas hinter snake mit Hintergrundfarbe überschreiben
         }
-        else {
+        else {// Wenn Essen
             this.placeFood();
+            //Speedup
+            if (Math.floor(tickrate/SPEEDUP) > SPEEDLIMIT){
+                tickrate = Math.floor(tickrate/SPEEDUP);
+            }
         }
     }
 
@@ -151,6 +159,7 @@ class Snake {
         discard.forEach(segment => {
             field.renderSegment(segment,BGCOLOR)
         });
+        tickrate = INITSPEED;
         this.body = this.body.slice(0,this.initLength);
     }
 
