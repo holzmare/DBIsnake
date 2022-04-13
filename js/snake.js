@@ -19,9 +19,10 @@ var key = "no";
 var tickrate = INITSPEED;
 
 async function main(){
-    field.initBG();
+    field.init();
     snake = new Snake(3);
     document.addEventListener("keydown", this.keyDownHandler, false);
+    snake.displayScore();
     while(true){
         snake.renderBody(field);
         await sleep(tickrate);
@@ -35,14 +36,26 @@ function sleep(milliseconds) {
 
 var field = {
     canvas : document.createElement("canvas"),
+    highscore : highscore = window.localStorage.getItem("highscore"),
+
+
+    score : document.createElement("div"),
     stepWidth : Math.floor(Math.min(window.innerWidth, window.innerHeight)/GRIDSIZE),
-    initBG : function(){
+    init : function(){
         this.canvas.width = this.stepWidth*GRIDSIZE;
         this.canvas.height = this.stepWidth*GRIDSIZE;
         this.context = this.canvas.getContext("2d");
+        this.score.setAttribute("style", "position: absolute; z-index: 1; left: 10px; top: 10px; width:200px;color: white;font-weight: bold;font-size: 14pt;");
+        if (this.highscore == null) this.highscore = 0;
+        this.updateScore(0);
+        document.body.insertBefore(this.score, document.body.childNodes[0]);
         document.body.insertBefore(this.canvas, document.body.childNodes[0]);
         this.context.fillStyle = BGCOLOR;
         this.context.fillRect(0,0,this.canvas.width,this.canvas.height);
+    },
+
+    updateScore : function(score){
+        this.score.innerHTML = "Score: "+score+" <br> Highscore: "+this.highscore;
     },
     /**
      * @description - Converts a grid unit to raw pixel values
@@ -106,6 +119,7 @@ class Snake {
     * @param {char} dir : r,l -> lenken
     */
    move(dir){
+    key = "no";
        if (dir == "l"){
            this.heading = {x: this.heading.y, y: -this.heading.x}
        }
@@ -115,7 +129,6 @@ class Snake {
        this.body.unshift({x: mod(this.body[0].x+this.heading.x,GRIDSIZE), y: mod(this.body[0].y+this.heading.y,GRIDSIZE)});
        //Kollisionscheck Schlange
        this.checkCollision();
-       key = "no";
    }
 
     checkCollision() {
@@ -128,6 +141,7 @@ class Snake {
             field.renderSegment(this.body.pop(), BGCOLOR); //Canvas hinter snake mit Hintergrundfarbe überschreiben
         }
         else {// Wenn Essen
+            field.updateScore(this.body.length-(this.initLength));
             this.placeFood();
             //Speedup
             if (Math.floor(tickrate/SPEEDUP) > SPEEDLIMIT){
@@ -161,7 +175,12 @@ class Snake {
         });
         tickrate = INITSPEED;
         this.body = this.body.slice(0,this.initLength);
+        field.updateScore(0);
     }
+
+    displayScore(){
+    }
+
 
     collides(coord, head){
         console.log(coord.x == head.x && coord.y == head.y);
