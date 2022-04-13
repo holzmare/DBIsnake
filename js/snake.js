@@ -39,7 +39,7 @@ var field = {
     initBG : function(){
         this.canvas.width = this.stepWidth*GRIDSIZE;
         this.canvas.height = this.stepWidth*GRIDSIZE;
-        this.context = this.canvas.getContext("2d")
+        this.context = this.canvas.getContext("2d");
         document.body.insertBefore(this.canvas, document.body.childNodes[0]);
         this.context.fillStyle = BGCOLOR;
         this.context.fillRect(0,0,this.canvas.width,this.canvas.height);
@@ -74,11 +74,11 @@ var field = {
 
 class Snake {
     body = [];
-    heading = {x: 0, y: 1}
+    heading = {x: 0, y: 1};
     food;
     initLength = 3;
     constructor(length=3){
-        this.initLength = length
+        this.initLength = length;
         let y = Math.floor(GRIDSIZE/2)-length;
         for(var i=0; i<length; i++){
             this.body.unshift({x: Math.floor(GRIDSIZE/2),y: mod(y+i,GRIDSIZE)});
@@ -96,7 +96,7 @@ class Snake {
         var head = this.body[0];
         var tail = this.body.slice(1);
         tail.forEach(segment => {
-            field.renderSegment(segment,color)
+            field.renderSegment(segment,color);
         });
         field.renderSegment(head,headcolor);
     }    
@@ -114,11 +114,11 @@ class Snake {
        }
        this.body.unshift({x: mod(this.body[0].x+this.heading.x,GRIDSIZE), y: mod(this.body[0].y+this.heading.y,GRIDSIZE)});
        //Kollisionscheck Schlange
-       this.collisionLogic();
+       this.checkCollision();
        key = "no";
    }
 
-    collisionLogic() {
+    checkCollision() {
         if (this.body.slice(1).some(coord => { return this.collides(coord, this.body[0]); })) {
             this.gameOver();
         }
@@ -144,7 +144,7 @@ class Snake {
 
     gameOver() {
         var highscore = window.localStorage.getItem("highscore");
-        console.log(this.body.length + "-" + this.initLength)
+        console.log(this.body.length + "-" + this.initLength);
         if (highscore == null) highscore = 0;
         var score = this.body.length-(this.initLength+1);
         if (score > highscore){
@@ -157,7 +157,7 @@ class Snake {
         //Restart
         var discard = this.body.slice(this.initLength,this.body.length);
         discard.forEach(segment => {
-            field.renderSegment(segment,BGCOLOR)
+            field.renderSegment(segment,BGCOLOR);
         });
         tickrate = INITSPEED;
         this.body = this.body.slice(0,this.initLength);
@@ -173,7 +173,7 @@ class Snake {
         var fields = [];
         for(var i = 0; i<GRIDSIZE; i++){
             for(var j = 0; j<GRIDSIZE; j++){
-                fields.push({x: i, y: j})
+                fields.push({x: i, y: j});
             }
         }
         var free = fields.filter(field => !this.body.some(part => part.x === field.x && part.y === field.y));
