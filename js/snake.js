@@ -19,10 +19,9 @@ var key = "no";
 var tickrate = INITSPEED;
 
 async function main(){
-    field.init();
+    field.init(document.body);
     snake = new Snake(3);
     document.addEventListener("keydown", this.keyDownHandler, false);
-    snake.displayScore();
     while(true){
         snake.renderBody(field);
         await sleep(tickrate);
@@ -35,21 +34,30 @@ function sleep(milliseconds) {
 }  
 
 var field = {
+    container : document.createElement("div"),
     canvas : document.createElement("canvas"),
     highscore : highscore = window.localStorage.getItem("highscore"),
-
-
     score : document.createElement("div"),
-    stepWidth : Math.floor(Math.min(window.innerWidth, window.innerHeight)/GRIDSIZE),
-    init : function(){
-        this.canvas.width = this.stepWidth*GRIDSIZE;
-        this.canvas.height = this.stepWidth*GRIDSIZE;
+    stepWidth : 4,
+    init : function(parent){
         this.context = this.canvas.getContext("2d");
         this.score.setAttribute("style", "position: absolute; z-index: 1; left: 10px; top: 10px; width:200px;color: white;font-weight: bold;font-size: 14pt;");
         if (this.highscore == null) this.highscore = 0;
         this.updateScore(0);
-        document.body.insertBefore(this.score, document.body.childNodes[0]);
-        document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+        this.container.width = 100;
+        this.container.setAttribute("style", "height:100%; border:1px;")
+        parent.insertBefore(this.container, parent.childNodes[0])
+        console.log("container height: " + this.container.clientHeight);
+        if(this.container.clientWidth == 0 || this.container.clientHeight == 0){
+            this.stepWidth = Math.floor(Math.max(this.container.clientWidth, this.container.clientHeight)/GRIDSIZE);
+
+        }else{
+            this.stepWidth = Math.floor(Math.min(this.container.clientWidth, this.container.clientHeight)/GRIDSIZE);
+        }
+        this.canvas.width = this.stepWidth*GRIDSIZE;
+        this.canvas.height = this.stepWidth*GRIDSIZE;
+        this.container.insertBefore(this.score, this.container.childNodes[0]);
+        this.container.insertBefore(this.canvas, this.container.childNodes[0]);
         this.context.fillStyle = BGCOLOR;
         this.context.fillRect(0,0,this.canvas.width,this.canvas.height);
     },
@@ -178,13 +186,10 @@ class Snake {
         field.updateScore(0);
     }
 
-    displayScore(){
-    }
 
-
-    collides(coord, head){
-        console.log(coord.x == head.x && coord.y == head.y);
-        return coord.x == head.x && coord.y == head.y;
+    collides(obj1, obj2){
+        console.log(obj1.x == obj2.x && obj1.y == obj2.y);
+        return obj1.x == obj2.x && obj1.y == obj2.y;
     }
 
     notBody(){
