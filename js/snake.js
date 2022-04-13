@@ -119,16 +119,16 @@ class Snake {
     * @param {char} dir : r,l -> lenken
     */
    move(dir){
-    key = "no";
-       if (dir == "l"){
+        key = "no";
+        if (dir == "l"){
            this.heading = {x: this.heading.y, y: -this.heading.x}
-       }
-       else if (dir == "r"){
-           this.heading = {x: -this.heading.y, y: this.heading.x}
-       }
-       this.body.unshift({x: mod(this.body[0].x+this.heading.x,GRIDSIZE), y: mod(this.body[0].y+this.heading.y,GRIDSIZE)});
-       //Kollisionscheck Schlange
-       this.checkCollision();
+        }
+        else if (dir == "r"){
+            this.heading = {x: -this.heading.y, y: this.heading.x}
+        }
+        this.body.unshift({x: mod(this.body[0].x+this.heading.x,GRIDSIZE), y: mod(this.body[0].y+this.heading.y,GRIDSIZE)});
+        //Kollisionscheck Schlange
+        this.checkCollision();
    }
 
     checkCollision() {
