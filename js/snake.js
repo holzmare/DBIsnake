@@ -22,6 +22,7 @@ async function main(){
     field.init(document.body);
     snake = new Snake(3);
     document.addEventListener("keydown", this.keyDownHandler, false);
+    window.addEventListener("resize", field.resizeCanvas, false);
     while(true){
         snake.renderBody(field);
         await sleep(tickrate);
@@ -41,15 +42,20 @@ var field = {
     stepWidth : 4,
     init : function(parent){
         this.context = this.canvas.getContext("2d");
+        this.canvas.setAttribute("style", "")
+        this.canvas.webkitImageSmoothingEnabled = false;
+        this.canvas.mozImageSmoothingEnabled = false;
+        this.canvas.imageSmoothingEnabled = false;
         this.score.setAttribute("style", "position: absolute; z-index: 1; left: 10px; top: 10px; width:200px;color: white;font-weight: bold;font-size: 14pt;");
         if (this.highscore == null) this.highscore = 0;
         this.updateScore(0);
         this.container.width = 100;
-        this.container.setAttribute("style", "height:100%; border:1px;")
+        this.container.setAttribute("style", "height:100%;")
         parent.insertBefore(this.container, parent.childNodes[0])
         console.log("container height: " + this.container.clientHeight);
         if(this.container.clientWidth == 0 || this.container.clientHeight == 0){
-            this.stepWidth = Math.floor(Math.max(this.container.clientWidth, this.container.clientHeight)/GRIDSIZE);
+            console.log("Parent has no fixed size, using 400px as default.")
+            this.stepWidth = Math.floor(400/GRIDSIZE);
 
         }else{
             this.stepWidth = Math.floor(Math.min(this.container.clientWidth, this.container.clientHeight)/GRIDSIZE);
@@ -60,6 +66,13 @@ var field = {
         this.container.insertBefore(this.canvas, this.container.childNodes[0]);
         this.context.fillStyle = BGCOLOR;
         this.context.fillRect(0,0,this.canvas.width,this.canvas.height);
+    },
+
+    resizeCanvas: function(){
+        let newSize = Math.floor(Math.min(field.container.clientWidth, field.container.clientHeight)/GRIDSIZE)*GRIDSIZE;
+        console.log(newSize)
+        field.canvas.style.height = newSize+"px";
+        field.canvas.style.width = newSize+"px";
     },
 
     updateScore : function(score){
@@ -235,6 +248,11 @@ function keyDownHandler(e) {
         key = "l";
     }
     console.log(key);
+}
+
+ 
+function resizeCanvas(e) {
+    field.canvas.resizeCanvas();
 }
 
 
