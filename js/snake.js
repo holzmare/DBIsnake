@@ -2,7 +2,7 @@
 const DBIRED = "#EE2E31";
 const DBIBLUE = "#1E345A";
 const DBIWHITE = "#FFFFFF"; //TODO checken ob es wirklich FFFFFF ist
-const GRIDSIZE = 20;
+const GRIDSIZE = 15;
 const BGCOLOR = DBIBLUE;
 const INITSPEED = 500;
 const SPEEDUP = 1.05;
@@ -12,21 +12,17 @@ function mod(num, div) {
     return ((num%div)+div)%div;
 }
 
-var snake;
-
-var key = "no";
-
-var tickrate = INITSPEED;
 
 async function main(){
+    let snake;
     field.init(document.body);
     snake = new Snake(3);
     document.addEventListener("keydown", this.keyDownHandler, false);
     window.addEventListener("resize", field.resizeCanvas, false);
     while(true){
         snake.renderBody(field);
-        await sleep(tickrate);
-        snake.move(key);
+        await sleep(field.tickrate);
+        snake.move(field.key);
     }
 }   
 
@@ -34,24 +30,67 @@ function sleep(milliseconds) {
     return new Promise(resolve => setTimeout(resolve, milliseconds));
 }  
 
+class Coord {
+    constructor(x, y){
+        this.x = x;
+        this.y = y;
+    }
+
+    setXY(x,y){
+        this.x = x;
+        this.y = y;
+    }
+}
+
+class Score {
+    //TODO: Allgemeiner, evtl teilweise in eine "Display"-Klasse auslagern
+    constructor(parent){
+        this.score = 0;
+        let highscore = window.localStorage.getItem("highscore");
+        if (highscore == null){
+            highscore = 0;
+        }
+        this.highscore = highscore;
+        this.display = document.createElement("div"),
+        this.display.setAttribute("style", "position: absolute; z-index: 1; left: 10px; top: 10px; width:200px;color: white;font-weight: bold;font-size: 14pt;");
+        this.update();
+        parent.insertBefore(this.display, parent.childNodes[0]);
+    }
+
+    inc (){
+        this.score++;
+        this.update;
+    }
+
+    set (score){
+        this.score = score
+        this.update();
+    }
+
+    setHighscore(highscore) {
+        this.highscore = highscore;
+        window.localStorage.setItem("highscore", highscore);
+    }
+
+    update (){
+        this.display.innerHTML = "Score: "+this.score+" <br> Highscore: "+this.highscore;
+    }
+}
+
 var field = {
     container : document.createElement("div"),
     canvas : document.createElement("canvas"),
-    highscore : highscore = window.localStorage.getItem("highscore"),
-    score : document.createElement("div"),
     stepWidth : 4,
+    key: "no",
+    tickrate: INITSPEED,
     init : function(parent){
         this.context = this.canvas.getContext("2d");
-        this.canvas.setAttribute("style", "")
         this.canvas.webkitImageSmoothingEnabled = false;
         this.canvas.mozImageSmoothingEnabled = false;
         this.canvas.imageSmoothingEnabled = false;
-        this.score.setAttribute("style", "position: absolute; z-index: 1; left: 10px; top: 10px; width:200px;color: white;font-weight: bold;font-size: 14pt;");
-        if (this.highscore == null) this.highscore = 0;
-        this.updateScore(0);
         this.container.width = 100;
-        this.container.setAttribute("style", "height:100%;")
-        parent.insertBefore(this.container, parent.childNodes[0])
+        this.container.setAttribute("style", "height:100%;");
+        parent.insertBefore(this.container, parent.childNodes[0]);
         console.log("container height: " + this.container.clientHeight);
         if(this.container.clientWidth == 0 || this.container.clientHeight == 0){
             console.log("Parent has no fixed size, using 400px as default.")
@@ -62,7 +101,7 @@ var field = {
         }
         this.canvas.width = this.stepWidth*GRIDSIZE;
         this.canvas.height = this.stepWidth*GRIDSIZE;
-        this.container.insertBefore(this.score, this.container.childNodes[0]);
+        this.score = new Score(this.container);
         this.container.insertBefore(this.canvas, this.container.childNodes[0]);
         this.context.fillStyle = BGCOLOR;
         this.context.fillRect(0,0,this.canvas.width,this.canvas.height);
@@ -75,9 +114,6 @@ var field = {
         field.canvas.style.width = newSize+"px";
     },
 
-    updateScore : function(score){
-        this.score.innerHTML = "Score: "+score+" <br> Highscore: "+this.highscore;
-    },
     /**
      * @description - Converts a grid unit to raw pixel values
      * @param {int} grid - grid-coord
@@ -90,38 +126,37 @@ var field = {
     /**
      * @description - Converts a grid-object to the pixel coords of its left upper corner
      * @param {{x: int, y: int}} grid 
-     * @returns {{x: int, y: int}} - grid-coord object
+     * @returns Coord - grid-coord object
      */
     gridToRawXY : function(grid){
-    return {x: parseInt(this.gridToRaw(grid.x)), y: parseInt(this.gridToRaw(grid.y))};
+    return new Coord(parseInt(this.gridToRaw(grid.x)), parseInt(this.gridToRaw(grid.y)));
     },
 
     renderSegment : function  (segment, color=DBIWHITE){
-        this.context;
         point = this.gridToRawXY(segment);
         //console.log(point);
-        var rad = this.stepWidth;
+        var dim = this.stepWidth;
         this.context.fillStyle = color;
-        this.context.fillRect(point.x, point.y,rad, rad);
+        this.context.fillRect(point.x, point.y,dim, dim);
     }
 };
 
 class Snake {
     body = [];
-    heading = {x: 0, y: 1};
+    heading = new Coord(0,1);
     food;
     initLength = 3;
     constructor(length=3){
         this.initLength = length;
         let y = Math.floor(GRIDSIZE/2)-length;
         for(var i=0; i<length; i++){
-            this.body.unshift({x: Math.floor(GRIDSIZE/2),y: mod(y+i,GRIDSIZE)});
+            this.body.unshift(new Coord(Math.floor(GRIDSIZE/2), mod(y+i,GRIDSIZE)));
         }
         this.placeFood();
     }
 
     /**
-     * @description Schnlange auf Canvas zeichnen
+     * @description Schlange auf Canvas zeichnen
      * @param {*} field Spielfeld
      * @param {*} color Farbe für Schwanz
      * @param {*} headcolor Farbe für Kopf
@@ -140,20 +175,20 @@ class Snake {
     * @param {char} dir : r,l -> lenken
     */
    move(dir){
-        key = "no";
+        field.key = "no";
         if (dir == "l"){
-           this.heading = {x: this.heading.y, y: -this.heading.x}
+           this.heading.setXY(this.heading.y, -this.heading.x);
         }
         else if (dir == "r"){
-            this.heading = {x: -this.heading.y, y: this.heading.x}
+            this.heading.setXY(-this.heading.y, this.heading.x);
         }
-        this.body.unshift({x: mod(this.body[0].x+this.heading.x,GRIDSIZE), y: mod(this.body[0].y+this.heading.y,GRIDSIZE)});
+        this.body.unshift(new Coord(mod(this.body[0].x+this.heading.x,GRIDSIZE), mod(this.body[0].y+this.heading.y,GRIDSIZE)));
         //Kollisionscheck Schlange
         this.checkCollision();
    }
 
     checkCollision() {
-        if (this.body.slice(1).some(coord => { return this.collides(coord, this.body[0]); })) {
+        if (this.body.slice(1,-1).some(coord => { return this.collides(coord, this.body[0]); })) {
             this.gameOver();
         }
 
@@ -162,11 +197,11 @@ class Snake {
             field.renderSegment(this.body.pop(), BGCOLOR); //Canvas hinter snake mit Hintergrundfarbe überschreiben
         }
         else {// Wenn Essen
-            field.updateScore(this.body.length-(this.initLength));
+            field.score.set(this.body.length-(this.initLength));
             this.placeFood();
             //Speedup
-            if (Math.floor(tickrate/SPEEDUP) > SPEEDLIMIT){
-                tickrate = Math.floor(tickrate/SPEEDUP);
+            if (Math.floor(field.tickrate/SPEEDUP) > SPEEDLIMIT){
+                field.tickrate = Math.floor(field.tickrate/SPEEDUP);
             }
         }
     }
@@ -178,25 +213,23 @@ class Snake {
     }
 
     gameOver() {
-        var highscore = window.localStorage.getItem("highscore");
         console.log(this.body.length + "-" + this.initLength);
-        if (highscore == null) highscore = 0;
-        var score = this.body.length-(this.initLength+1);
-        if (score > highscore){
-            alert("GAME OVER!!! \nScore: "+score+"\nNEW HIGHSCORE!!! \nPrevious Highscore: "+highscore);
-            window.localStorage.setItem("highscore",score);
+        field.score.set(this.body.length-(this.initLength+1));
+        if (field.score.score > field.score.highscore){
+            alert("GAME OVER!!! \nScore: "+field.score.score+"\nNEW HIGHSCORE!!! \nPrevious Highscore: "+field.score.highscore);
+            window.localStorage.setItem("highscore",field.score.score);
         }
         else{
-            alert("GAME OVER!!! \nScore: "+score+"\nHighscore: "+highscore);
+            alert("GAME OVER!!! \nScore: "+field.score.score+"\nHighscore: "+field.score.highscore);
         }
         //Restart
         var discard = this.body.slice(this.initLength,this.body.length);
         discard.forEach(segment => {
             field.renderSegment(segment,BGCOLOR);
         });
-        tickrate = INITSPEED;
+        field.tickrate = INITSPEED;
         this.body = this.body.slice(0,this.initLength);
-        field.updateScore(0);
+        field.score.set(0);
     }
 
 
@@ -242,12 +275,12 @@ class Snake {
 function keyDownHandler(e) {
     console.log("test")
     if(e.key == "Right" || e.key == "ArrowRight") {
-        key = "r";
+        field.key = "r";
     }
     else if(e.key == "Left" || e.key == "ArrowLeft") {
-        key = "l";
+        field.key = "l";
     }
-    console.log(key);
+    console.log(field.key);
 }
 
  
