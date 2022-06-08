@@ -15,14 +15,13 @@ function mod(num, div) {
 
 async function main(){
     let snake;
+    let field;
     field = new Field(document.body);
     snake = new Snake(field,3);
-    document.addEventListener("keydown", this.keyDownHandler, false);
-    window.addEventListener("resize", field.resizeCanvas, false);
     while(true){
-        snake.renderBody(field);
+        snake.renderBody();
         await sleep(field.tickrate);
-        snake.move(field.key);
+        snake.move(snake.key);
     }
 }   
 
@@ -82,7 +81,7 @@ class Field {
     container = document.createElement("div");
     canvas = document.createElement("canvas");
     stepWidth;
-    key = "no";
+    key = "s";
     tickrate = INITSPEED;
     constructor(parentObj){
         this.context = this.canvas.getContext("2d");
@@ -106,6 +105,8 @@ class Field {
         this.container.insertBefore(this.canvas, this.container.childNodes[0]);
         this.context.fillStyle = BGCOLOR;
         this.context.fillRect(0,0,this.canvas.width,this.canvas.height);
+
+        window.addEventListener("resize", this.resizeCanvas, false);
     };
 
     resizeCanvas(){
@@ -134,18 +135,20 @@ class Field {
     };
 
     renderSegment(segment, color = DBIWHITE){
-        point = this.gridToRawXY(segment);
+        let point = this.gridToRawXY(segment);
         //console.log(point);
         var dim = this.stepWidth;
         this.context.fillStyle = color;
         this.context.fillRect(point.x, point.y,dim, dim);
-    }
+    };
+    
 }
 
 class Snake {
     body = [];
     heading = new Coord(0,1);
     food;
+    key = ["s","s"];
     initLength = 3;
     constructor(field, length=3){
         this.field = field;
@@ -155,6 +158,8 @@ class Snake {
             this.body.unshift(new Coord(Math.floor(GRIDSIZE/2), mod(y+i,GRIDSIZE)));
         }
         this.placeFood();
+
+        document.addEventListener("keydown", this.keyDownHandler.bind(this), false);
     }
 
     /**
@@ -176,10 +181,12 @@ class Snake {
     * @description Schlangenbewegung
     * @param {char} dir : r,l -> lenken
     */
-   move(dir){
-        this.field.key = "no";
+   async move(dir){
+        console.log(this.key)
+        dir = this.key.shift();
+        this.key.push("s");
         if (dir == "l"){
-           this.heading.setXY(this.heading.y, -this.heading.x);
+            this.heading.setXY(this.heading.y, -this.heading.x);
         }
         else if (dir == "r"){
             this.heading.setXY(-this.heading.y, this.heading.x);
@@ -210,6 +217,7 @@ class Snake {
 
     placeFood(){
         var free = this.notBody();
+        console.log(free)
         this.food = free[Math.floor(Math.random()*free.length)];
         this.field.renderSegment(this.food, DBIRED);
     }
@@ -236,19 +244,22 @@ class Snake {
 
 
     collides(obj1, obj2){
-        console.log(obj1.x == obj2.x && obj1.y == obj2.y);
+        //console.log(obj1.x == obj2.x && obj1.y == obj2.y);
         return obj1.x == obj2.x && obj1.y == obj2.y;
     }
 
     notBody(){
         //generate all available fields
-        var fields = [];
+        var free = [];
+        var c;
         for(var i = 0; i<GRIDSIZE; i++){
             for(var j = 0; j<GRIDSIZE; j++){
-                fields.push({x: i, y: j});
+                c = new Coord(i,j)
+                if(!this.body.some(field => field.x === c.x && field.y === c.y)){
+                    free.push(c);
+                }
             }
         }
-        var free = fields.filter(this.field => !this.body.some(part => part.x === this.field.x && part.y === this.field.y));
         /*
         console.log(free);
         free.forEach(segment => {
@@ -256,6 +267,21 @@ class Snake {
         });
         */
         return free;
+    }
+
+    keyDownHandler(e) {
+        //console.log(this.key)
+        let found = this.key.indexOf("s");
+        if (found >= 0){
+            if(e.key == "Right" || e.key == "ArrowRight") {
+                this.key[found] = "r";
+            }
+            else if(e.key == "Left" || e.key == "ArrowLeft") {
+                this.key[found] = "l";
+            }
+        }
+
+        //console.log(this.key);
     }
 
     /*
@@ -274,23 +300,10 @@ class Snake {
 }
 
 
-function keyDownHandler(e) {
-    console.log("test")
-    if(e.key == "Right" || e.key == "ArrowRight") {
-        field.key = "r";
-    }
-    else if(e.key == "Left" || e.key == "ArrowLeft") {
-        field.key = "l";
-    }
-    console.log(field.key);
-}
 
  
-function resizeCanvas(e) {
-    field.canvas.resizeCanvas();
-}
 
-
+//WIP
 function renderRoundedBody (body, ctx, cornerHardness){
     ctx.beginPath();
     ctx.moveTo(100,50);
