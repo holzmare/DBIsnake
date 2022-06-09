@@ -112,6 +112,7 @@ class SnakeGame {
         });
         this.tickrate = this.INITSPEED;
         this.snake.body = this.snake.body.slice(0, this.snake.initLength);
+        this.key = [];
         this.field.score.set(0);
         this.field.score.update();
     }
