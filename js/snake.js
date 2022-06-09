@@ -15,8 +15,8 @@ function mod(num, div) {
 
 async function main(){
     let snake;
-    field.init(document.body);
-    snake = new Snake(3);
+    field = new Field(document.body);
+    snake = new Snake(field,3);
     document.addEventListener("keydown", this.keyDownHandler, false);
     window.addEventListener("resize", field.resizeCanvas, false);
     while(true){
@@ -44,7 +44,7 @@ class Coord {
 
 class Score {
     //TODO: Allgemeiner, evtl teilweise in eine "Display"-Klasse auslagern
-    constructor(parent){
+    constructor(parentObj){
         this.score = 0;
         let highscore = window.localStorage.getItem("highscore");
         if (highscore == null){
@@ -54,7 +54,7 @@ class Score {
         this.display = document.createElement("div"),
         this.display.setAttribute("style", "position: absolute; z-index: 1; left: 10px; top: 10px; width:200px;color: white;font-weight: bold;font-size: 14pt;");
         this.update();
-        parent.insertBefore(this.display, parent.childNodes[0]);
+        parentObj.insertBefore(this.display, parentObj.childNodes[0]);
     }
 
     inc (){
@@ -77,20 +77,21 @@ class Score {
     }
 }
 
-var field = {
-    container : document.createElement("div"),
-    canvas : document.createElement("canvas"),
-    stepWidth : 4,
-    key: "no",
-    tickrate: INITSPEED,
-    init : function(parent){
+class Field {
+    
+    container = document.createElement("div");
+    canvas = document.createElement("canvas");
+    stepWidth;
+    key = "no";
+    tickrate = INITSPEED;
+    constructor(parentObj){
         this.context = this.canvas.getContext("2d");
         this.canvas.webkitImageSmoothingEnabled = false;
         this.canvas.mozImageSmoothingEnabled = false;
         this.canvas.imageSmoothingEnabled = false;
         this.container.width = 100;
         this.container.setAttribute("style", "height:100%;");
-        parent.insertBefore(this.container, parent.childNodes[0]);
+        parentObj.insertBefore(this.container, parentObj.childNodes[0]);
         console.log("container height: " + this.container.clientHeight);
         if(this.container.clientWidth == 0 || this.container.clientHeight == 0){
             console.log("Parent has no fixed size, using 400px as default.")
@@ -105,48 +106,49 @@ var field = {
         this.container.insertBefore(this.canvas, this.container.childNodes[0]);
         this.context.fillStyle = BGCOLOR;
         this.context.fillRect(0,0,this.canvas.width,this.canvas.height);
-    },
+    };
 
-    resizeCanvas: function(){
-        let newSize = Math.floor(Math.min(field.container.clientWidth, field.container.clientHeight)/GRIDSIZE)*GRIDSIZE;
+    resizeCanvas(){
+        let newSize = Math.floor(Math.min(this.container.clientWidth, this.container.clientHeight)/GRIDSIZE)*GRIDSIZE;
         console.log(newSize)
-        field.canvas.style.height = newSize+"px";
-        field.canvas.style.width = newSize+"px";
-    },
+        this.canvas.style.height = newSize+"px";
+        this.canvas.style.width = newSize+"px";
+    };
 
     /**
      * @description - Converts a grid unit to raw pixel values
      * @param {int} grid - grid-coord
      * @returns {int} - pixel value of beginning of the grid-field
      */
-    gridToRaw : function  (grid){
+    gridToRaw(grid){
     return grid * this.stepWidth;
-    },
+    };
 
     /**
      * @description - Converts a grid-object to the pixel coords of its left upper corner
      * @param {{x: int, y: int}} grid 
      * @returns Coord - grid-coord object
      */
-    gridToRawXY : function(grid){
+    gridToRawXY(grid){
     return new Coord(parseInt(this.gridToRaw(grid.x)), parseInt(this.gridToRaw(grid.y)));
-    },
+    };
 
-    renderSegment : function  (segment, color=DBIWHITE){
+    renderSegment(segment, color = DBIWHITE){
         point = this.gridToRawXY(segment);
         //console.log(point);
         var dim = this.stepWidth;
         this.context.fillStyle = color;
         this.context.fillRect(point.x, point.y,dim, dim);
     }
-};
+}
 
 class Snake {
     body = [];
     heading = new Coord(0,1);
     food;
     initLength = 3;
-    constructor(length=3){
+    constructor(field, length=3){
+        this.field = field;
         this.initLength = length;
         let y = Math.floor(GRIDSIZE/2)-length;
         for(var i=0; i<length; i++){
@@ -161,13 +163,13 @@ class Snake {
      * @param {*} color Farbe für Schwanz
      * @param {*} headcolor Farbe für Kopf
      */
-    renderBody(field, color=DBIWHITE, headcolor="green"){
+    renderBody(color=DBIWHITE, headcolor="green"){
         var head = this.body[0];
         var tail = this.body.slice(1);
         tail.forEach(segment => {
-            field.renderSegment(segment,color);
+            this.field.renderSegment(segment,color);
         });
-        field.renderSegment(head,headcolor);
+        this.field.renderSegment(head,headcolor);
     }    
     
     /**
@@ -175,7 +177,7 @@ class Snake {
     * @param {char} dir : r,l -> lenken
     */
    move(dir){
-        field.key = "no";
+        this.field.key = "no";
         if (dir == "l"){
            this.heading.setXY(this.heading.y, -this.heading.x);
         }
@@ -194,14 +196,14 @@ class Snake {
 
         // Kollisionscheck Essen (wenn kein Essen)
         else if (!this.collides(this.food, this.body[0])) {
-            field.renderSegment(this.body.pop(), BGCOLOR); //Canvas hinter snake mit Hintergrundfarbe überschreiben
+            this.field.renderSegment(this.body.pop(), BGCOLOR); //Canvas hinter snake mit Hintergrundfarbe überschreiben
         }
         else {// Wenn Essen
-            field.score.set(this.body.length-(this.initLength));
+            this.field.score.set(this.body.length-(this.initLength));
             this.placeFood();
             //Speedup
-            if (Math.floor(field.tickrate/SPEEDUP) > SPEEDLIMIT){
-                field.tickrate = Math.floor(field.tickrate/SPEEDUP);
+            if (Math.floor(this.field.tickrate/SPEEDUP) > SPEEDLIMIT){
+                this.field.tickrate = Math.floor(this.field.tickrate/SPEEDUP);
             }
         }
     }
@@ -209,27 +211,27 @@ class Snake {
     placeFood(){
         var free = this.notBody();
         this.food = free[Math.floor(Math.random()*free.length)];
-        field.renderSegment(this.food, DBIRED);
+        this.field.renderSegment(this.food, DBIRED);
     }
 
     gameOver() {
         console.log(this.body.length + "-" + this.initLength);
-        field.score.set(this.body.length-(this.initLength+1));
-        if (field.score.score > field.score.highscore){
-            alert("GAME OVER!!! \nScore: "+field.score.score+"\nNEW HIGHSCORE!!! \nPrevious Highscore: "+field.score.highscore);
-            window.localStorage.setItem("highscore",field.score.score);
+        this.field.score.set(this.body.length-(this.initLength+1));
+        if (this.field.score.score > this.field.score.highscore){
+            alert("GAME OVER!!! \nScore: "+this.field.score.score+"\nNEW HIGHSCORE!!! \nPrevious Highscore: "+this.field.score.highscore);
+            window.localStorage.setItem("highscore",this.field.score.score);
         }
         else{
-            alert("GAME OVER!!! \nScore: "+field.score.score+"\nHighscore: "+field.score.highscore);
+            alert("GAME OVER!!! \nScore: "+this.field.score.score+"\nHighscore: "+this.field.score.highscore);
         }
         //Restart
         var discard = this.body.slice(this.initLength,this.body.length);
         discard.forEach(segment => {
-            field.renderSegment(segment,BGCOLOR);
+            this.field.renderSegment(segment,BGCOLOR);
         });
-        field.tickrate = INITSPEED;
+        this.field.tickrate = INITSPEED;
         this.body = this.body.slice(0,this.initLength);
-        field.score.set(0);
+        this.field.score.set(0);
     }
 
 
@@ -246,7 +248,7 @@ class Snake {
                 fields.push({x: i, y: j});
             }
         }
-        var free = fields.filter(field => !this.body.some(part => part.x === field.x && part.y === field.y));
+        var free = fields.filter(field => !this.body.some(part => part.x === this.field.x && part.y === this.field.y));
         /*
         console.log(free);
         free.forEach(segment => {
