@@ -1,6 +1,5 @@
 async function main() {
-    let game;
-    game = new SnakeGame(document.body, 3);
+    let game = new SnakeGame(document.body, 3);
     await game.start();
     game.destroy();
 }
