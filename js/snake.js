@@ -1,7 +1,7 @@
-function main() {
+async function main() {
     let game;
     game = new SnakeGame(document.body, 3);
-    game.start();
+    await game.start();
     game.destroy();
 }
 
