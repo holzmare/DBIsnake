@@ -1,0 +1,29 @@
+{
+  "name": "dbi-snake",
+  "version": "0.0.1",
+  "description": "An open source \"Snake\"-game implementation in pure JavaScript",
+  "main": "snake.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "npm run open",
+    "open": "http-server ./ -a localhost -p 1234 -o /index.html"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/holzmare/DBIsnake.git"
+  },
+  "keywords": [
+    "snake",
+    "js",
+    "game"
+  ],
+  "author": "René Holzmann",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/holzmare/DBIsnake/issues"
+  },
+  "homepage": "https://github.com/holzmare/DBIsnake#readme",
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  }
+}
