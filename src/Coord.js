@@ -1,7 +1,7 @@
 /**
  * data structure for x/y coordinates
  */
-export class Coord {
+export default class Coord {
     /**
      * initializes a new Coord
      * @param {int} x
@@ -22,5 +22,3 @@ export class Coord {
         this.y = y;
     }
 }
-
-//export {Coord}

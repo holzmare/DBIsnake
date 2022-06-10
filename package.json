@@ -2,7 +2,7 @@
   "name": "dbi-snake",
   "version": "0.0.1",
   "description": "An open source \"Snake\"-game implementation in pure JavaScript",
-  "main": "snake.js",
+  "main": "./src/SnakeGame.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "npm run open",
