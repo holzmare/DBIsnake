@@ -1,16 +1,31 @@
 <!DOCTYPE html>
+
 <html>
-    <title>DBIsnake</title>
-<body onload="main();" style="height:100vh">
+<title>DBIsnake</title>
+
+<script type="module">
+    import SnakeGame from './src/snake.js'
+
+    async function main() {
+        let game = new SnakeGame(document.body, 3);
+        await game.start();
+        //game.destroy();
+    };
+
+    main();
+</script>
+
+<body style="height:100vh">
 
 </body>
-
-<script type="text/javascript" src="./js/snake.js">
-</script>
 <style>
-    html, body, div, canvas {
-    margin: 0;
-    padding: 0;
-}
+    html,
+    body,
+    div,
+    canvas {
+        margin: 0;
+        padding: 0;
+    }
 </style>
+
 </html>

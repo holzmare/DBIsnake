@@ -1,14 +1,16 @@
-async function main() {
+import {Coord} from './Coord.js'
+
+/*async function main() {
     let game;
     game = new SnakeGame(document.body, 3);
     await game.start();
     game.destroy();
-}
+}*/
 
 /**
  * implements the game snake
  */
-class SnakeGame {
+export default class SnakeGame {
     // Config--------------------------------------------------------------
     DBIRED = "#EE2E31";
     DBIBLUE = "#1E345A";
@@ -199,31 +201,6 @@ class SnakeUtility {
 
 
 /**
- * data structure for x/y coordinates
- */
-class Coord {
-    /**
-     * initializes a new Coord
-     * @param {int} x 
-     * @param {int} y 
-     */
-    constructor(x, y) {
-        this.x = x;
-        this.y = y;
-    }
-
-    /**
-     * changes the coordinates of a Coord
-     * @param {int} x 
-     * @param {int} y 
-     */
-    setXY(x, y) {
-        this.x = x;
-        this.y = y;
-    }
-}
-
-/**
  * handles score display in a div element in the top left corner of its parent
  */
 class Score {
@@ -394,11 +371,6 @@ class Snake{
         this.body.unshift(new Coord(SnakeUtility.mod(this.body[0].x + this.heading.x, this.gridSize), SnakeUtility.mod(this.body[0].y + this.heading.y, this.gridSize)));
     }
 }
-
-
-
-
-
 
 /*
 //WIP
