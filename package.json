@@ -4,9 +4,8 @@
   "description": "An open source \"Snake\"-game implementation in pure JavaScript",
   "main": "./src/SnakeGame.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "npm run open",
-    "open": "http-server ./ -a localhost -p 1234 -o /index.html"
+    "test": "echo 'Error: No Tests defined'",
+    "start": "npm run test"
   },
   "repository": {
     "type": "git",
