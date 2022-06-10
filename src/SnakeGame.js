@@ -98,7 +98,7 @@ export default class SnakeGame {
         this.field.score.set(this.snake.body.length - (this.snake.initLength + 1));
         if (this.field.score.score > this.field.score.highscore) {
             alert("GAME OVER!!! \nScore: " + this.field.score.score + "\nNEW HIGHSCORE!!! \nPrevious Highscore: " + this.field.score.highscore);
-            window.localStorage.setItem("highscore", this.field.score.score);
+            this.field.score.setHighscore(this.field.score.score);
         }
         else {
             alert("GAME OVER!!! \nScore: " + this.field.score.score + "\nHighscore: " + this.field.score.highscore);
