@@ -71,7 +71,7 @@ export default class SnakeGame {
      */
     checkBodyCollision() {
         // checks collision with snake itself
-        if (this.snake.body.slice(1, -1).some(coord => { return this.collides(coord, this.snake.body[0]); })) {
+        if (this.snake.body.slice(1, -1).some(coord => { return Coord.collides(coord, this.snake.body[0]); })) {
             return true;
         } else {
             return false;
@@ -82,7 +82,7 @@ export default class SnakeGame {
      * checks if the head collides with food
      */
     checkFoodCollision() {
-        if (this.collides(this.food, this.snake.body[0])) {
+        if (Coord.collides(this.food, this.snake.body[0])) {
             return true;
         }
         else {
@@ -125,15 +125,6 @@ export default class SnakeGame {
         this.field.score.update();
     }
 
-    /**
-     * evaluates if two Coord-objects refer to the same coordinates
-     * @param {Coord} obj1
-     * @param {Coord} obj2
-     * @returns {boolean}
-     */
-    collides(obj1, obj2) {
-        return obj1.x === obj2.x && obj1.y === obj2.y;
-    }
 
     /**
      * generates an array with every field the snake is NOT on
@@ -146,7 +137,7 @@ export default class SnakeGame {
         for (let i = 0; i < this.GRIDSIZE; i++) {
             for (let j = 0; j < this.GRIDSIZE; j++) {
                 c = new Coord(i, j);
-                if (!this.snake.body.some(field => this.collides(field, c))) {
+                if (!this.snake.body.some(field => Coord.collides(field, c))) {
                     free.push(c);
                 }
             }
