@@ -35,7 +35,18 @@ export default class SnakeGame {
         while (true) {
             // console.log(this.key);
             this.snake.move(this.key.shift());
-            this.checkCollision();
+            if (this.checkBodyCollision()) {
+                this.gameOver();
+            } else if (this.checkFoodCollision()) {
+                this.field.score.set(this.snake.body.length - (this.snake.initLength));
+                //Speedup
+                if (Math.floor(this.tickrate / this.SPEEDUP) > this.SPEEDLIMIT) {
+                    this.tickrate = Math.floor(this.tickrate / this.SPEEDUP);
+                }
+                this.placeFood();
+            } else {
+                this.field.renderSegment(this.snake.body.pop(), this.BGCOLOR); //Canvas hinter snake mit Hintergrundfarbe überschreiben
+            }
             this.renderBody(this.snake.color, this.snake.headColor);
             await SnakeUtility.sleep(this.tickrate);
         }
@@ -56,27 +67,26 @@ export default class SnakeGame {
     }
 
     /**
-     * checks if any event should be triggered
+     * checks if head has collided with part of the snakes body
      */
-    checkCollision() {
+    checkBodyCollision() {
         // checks collision with snake itself
         if (this.snake.body.slice(1, -1).some(coord => { return this.collides(coord, this.snake.body[0]); })) {
-            this.gameOver();
+            return true;
+        } else {
+            return false;
         }
+    }
 
-
-        // checks collision with food
-        else if (this.collides(this.food, this.snake.body[0])) {
-            this.field.score.set(this.snake.body.length - (this.snake.initLength));
-            this.placeFood();
-            //Speedup
-            if (Math.floor(this.tickrate / this.SPEEDUP) > this.SPEEDLIMIT) {
-                this.tickrate = Math.floor(this.tickrate / this.SPEEDUP);
-
-            }
+    /**
+     * checks if the head collides with food
+     */
+    checkFoodCollision() {
+        if (this.collides(this.food, this.snake.body[0])) {
+            return true;
         }
         else {
-            this.field.renderSegment(this.snake.body.pop(), this.BGCOLOR); //Canvas hinter snake mit Hintergrundfarbe überschreiben
+            return false;
         }
     }
 
