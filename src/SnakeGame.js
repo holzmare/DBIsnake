@@ -6,23 +6,29 @@ import Snake from "./Snake.js";
  * implements the game snake
  */
 export default class SnakeGame {
-    // Config--------------------------------------------------------------
-    DBIRED = "#EE2E31";
-    DBIBLUE = "#1E345A";
-    DBIWHITE = "#FFFFFF"; //TODO checken ob es wirklich FFFFFF ist
-    GRIDSIZE = 15;
-    BGCOLOR = this.DBIBLUE;
-    INITSPEED = 500;
-    SPEEDUP = 1.05;
-    SPEEDLIMIT = 50;
-    //---------------------------------------------------------------------
     snake;
     food;
     key = [];
-    tickrate = this.INITSPEED;
-    constructor(parent, length = 3) {
+    /**
+     * 
+     * @param {HTMLElement} parent Game will be initialized as first child of this element
+     * @param {Object} config possible Values: int initLength, int gridSize, int initSpeed, float speedUp, 
+     *      int speedLimit, Object color {String bgColor, String bodyColor, String headColor}
+     */
+    constructor(parent, config) {Coord.collides
+        this.DBIRED = "#EE2E31";
+        this.DBIBLUE = "#1E345A";
+        this.DBIWHITE = "#FFFFFF"; //TODO checken ob es wirklich FFFFFF ist
+        this.GRIDSIZE = config.gridSize ?? 15;
+        this.BGCOLOR = config.bgColor ?? this.DBIBLUE;
+        this.INITSPEED = config.initSpeed ?? 500;
+        this.tickrate = this.INITSPEED;
+        this.SPEEDUP = config.speedUp ?? 1.05;
+        this.SPEEDLIMIT = config.speedLimit ?? 50;
+
         this.field = new Field(parent, this.GRIDSIZE, this.BGCOLOR);
-        this.snake = new Snake(length, this.GRIDSIZE, this.DBIWHITE, "grey");
+        this.snake = new Snake(config.initLength ?? 3, this.GRIDSIZE, config.headColor ?? this.DBIWHITE, config.headcolor ?? "grey");
+
         this.renderBody();
         this.placeFood();
 
