@@ -5,8 +5,8 @@
   "main": "./src/SnakeGame.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "npm run open",
-    "open": "http-server ./ -a localhost -p 1234 -o /index.html"
+    "start": "npm run dev",
+    "dev": "http-server ./ -a localhost -p 1234 -o /index.html"
   },
   "repository": {
     "type": "git",
@@ -17,7 +17,7 @@
     "js",
     "game"
   ],
-  "author": "René Holzmann",
+  "author": "René Holzmann <holzmare@outlook.com>",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/holzmare/DBIsnake/issues"
