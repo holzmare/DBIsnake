@@ -33,7 +33,7 @@ export default class SnakeGame {
      */
     async start() {
         while (true) {
-            console.log(this.key);
+            // console.log(this.key);
             this.snake.move(this.key.shift());
             this.checkCollision();
             this.renderBody(this.snake.color, this.snake.headColor);
@@ -85,7 +85,7 @@ export default class SnakeGame {
      */
     placeFood() {
         var free = this.notBody();
-        console.log(free);
+        // console.log(free);
         this.food = free[Math.floor(Math.random() * free.length)];
         this.field.renderSegment(this.food, this.DBIRED);
     }
@@ -94,7 +94,7 @@ export default class SnakeGame {
      * handles what happens at the end of a game
      */
     gameOver() {
-        console.log(this.snake.body.length + "-" + this.snake.initLength);
+        // console.log(this.snake.body.length + "-" + this.snake.initLength);
         this.field.score.set(this.snake.body.length - (this.snake.initLength + 1));
         if (this.field.score.score > this.field.score.highscore) {
             alert("GAME OVER!!! \nScore: " + this.field.score.score + "\nNEW HIGHSCORE!!! \nPrevious Highscore: " + this.field.score.highscore);

@@ -24,7 +24,7 @@ import Coord from "./Coord.js";
         this.container.width = 100;
         this.container.setAttribute("style", "height:100%;");
         parentObj.insertBefore(this.container, parentObj.childNodes[0]);
-        console.log("container height: " + this.container.clientHeight);
+        // console.log("container height: " + this.container.clientHeight);
         if (this.container.clientWidth == 0 || this.container.clientHeight == 0) {
             console.log("Parent has no fixed size, using 400px as default.");
             this.stepWidth = Math.floor(400 / this.gridsize);
@@ -47,7 +47,7 @@ import Coord from "./Coord.js";
      */
     resizeCanvas() {
         let newSize = Math.floor(Math.min(this.container.clientWidth, this.container.clientHeight) / this.gridsize) * this.gridsize;
-        console.log(newSize);
+        // console.log(newSize);
         this.canvas.style.height = newSize + "px";
         this.canvas.style.width = newSize + "px";
     };
@@ -70,7 +70,7 @@ import Coord from "./Coord.js";
         return new Coord(parseInt(this.gridToRaw(grid.x)), parseInt(this.gridToRaw(grid.y)));
     };
 
-    renderSegment(segment, color = "magenta") {
+    renderSegment(segment, color = "white") {
         let point = this.gridToRawXY(segment);
         //console.log(point);
         var dim = this.stepWidth;
