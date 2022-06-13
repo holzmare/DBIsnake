@@ -73,7 +73,7 @@ import Coord from "./Coord.js";
     renderSegment(segment, color = "white") {
         let point = this.gridToRawXY(segment);
         //console.log(point);
-        var dim = this.stepWidth;
+        let dim = this.stepWidth;
         this.context.fillStyle = color;
         this.context.fillRect(point.x, point.y, dim, dim);
     };

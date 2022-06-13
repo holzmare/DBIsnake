@@ -58,8 +58,8 @@ export default class SnakeGame {
      * @param {*} headcolor Farbe für Kopf
      */
     renderBody(color = this.DBIWHITE, headcolor = "green") {
-        var head = this.snake.body[0];
-        var tail = this.snake.body.slice(1);
+        let head = this.snake.body[0];
+        let tail = this.snake.body.slice(1);
         tail.forEach(segment => {
             this.field.renderSegment(segment, color);
         });
@@ -94,7 +94,7 @@ export default class SnakeGame {
      * places Food on an empty field
      */
     placeFood() {
-        var free = this.notBody();
+        let free = this.notBody();
         // console.log(free);
         this.food = free[Math.floor(Math.random() * free.length)];
         this.field.renderSegment(this.food, this.DBIRED);
@@ -114,7 +114,7 @@ export default class SnakeGame {
             alert("GAME OVER!!! \nScore: " + this.field.score.score + "\nHighscore: " + this.field.score.highscore);
         }
         //Restart
-        var discard = this.snake.body.slice(this.snake.initLength, this.snake.body.length);
+        let discard = this.snake.body.slice(this.snake.initLength, this.snake.body.length);
         discard.forEach(segment => {
             this.field.renderSegment(segment, this.BGCOLOR);
         });
@@ -141,10 +141,10 @@ export default class SnakeGame {
      */
     notBody() {
         //generate all available fields
-        var free = [];
-        var c;
-        for (var i = 0; i < this.GRIDSIZE; i++) {
-            for (var j = 0; j < this.GRIDSIZE; j++) {
+        let free = [];
+        let c;
+        for (let i = 0; i < this.GRIDSIZE; i++) {
+            for (let j = 0; j < this.GRIDSIZE; j++) {
                 c = new Coord(i, j);
                 if (!this.snake.body.some(field => this.collides(field, c))) {
                     free.push(c);

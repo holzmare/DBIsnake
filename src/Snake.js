@@ -13,7 +13,7 @@ export default class Snake {
         this.color = color;
         this.headColor = headColor;
         let y = Math.floor(this.gridSize / 2) - this.initLength;
-        for (var i = 0; i < this.initLength; i++) {
+        for (let i = 0; i < this.initLength; i++) {
             this.body.unshift(new Coord(Math.floor(this.gridSize / 2), SnakeUtility.mod(y + i, this.gridSize)));
         }
     }
