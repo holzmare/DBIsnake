@@ -39,7 +39,7 @@ import Coord from "./Coord.js";
         this.context.fillStyle = this.bgcolor;
         this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-        window.addEventListener("resize", this.resizeCanvas, false);
+        window.addEventListener("resize", this.resizeCanvas.bind(this), false);
     };
 
     /**
