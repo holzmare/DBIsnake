@@ -132,7 +132,7 @@ export default class SnakeGame {
      * @returns {boolean}
      */
     collides(obj1, obj2) {
-        return obj1.x == obj2.x && obj1.y == obj2.y;
+        return obj1.x === obj2.x && obj1.y === obj2.y;
     }
 
     /**
@@ -167,10 +167,10 @@ export default class SnakeGame {
     keyDownHandler(e) {
         //console.log(this.key)
         if (this.key.length <= 2) {
-            if (e.key == "Right" || e.key == "ArrowRight") {
+            if (e.key === "Right" || e.key === "ArrowRight") {
                 this.key.push("r");
             }
-            else if (e.key == "Left" || e.key == "ArrowLeft") {
+            else if (e.key === "Left" || e.key === "ArrowLeft") {
                 this.key.push("l");
             }
         }

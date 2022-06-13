@@ -22,10 +22,10 @@ export default class Snake {
     * moves the snake
     */
     move(dir) {
-        if (dir == "l") {
+        if (dir === "l") {
             this.heading.setXY(this.heading.y, -this.heading.x);
         }
-        else if (dir == "r") {
+        else if (dir === "r") {
             this.heading.setXY(-this.heading.y, this.heading.x);
         }
         this.body.unshift(new Coord(SnakeUtility.mod(this.body[0].x + this.heading.x, this.gridSize), SnakeUtility.mod(this.body[0].y + this.heading.y, this.gridSize)));

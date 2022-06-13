@@ -12,7 +12,7 @@ export default class Score {
     constructor(parentObj) {
         this.score = 0;
         let highscore = window.localStorage.getItem("highscore");
-        if (highscore == null) {
+        if (highscore === null) {
             highscore = 0;
         }
         this.highscore = highscore;
