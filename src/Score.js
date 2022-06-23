@@ -16,8 +16,8 @@ export default class Score {
             highscore = 0;
         }
         this.highscore = highscore;
-        this.display = document.createElement("div"),
-            this.display.setAttribute("style", "position: absolute; z-index: 1; left: 10px; top: 10px; width:200px;color: white;font-weight: bold;font-size: 14pt;");
+        this.display = document.createElement("div");
+        this.displayStyle(this.display);
         this.update();
         parentObj.insertBefore(this.display, parentObj.childNodes[0]);
     }
@@ -54,5 +54,16 @@ export default class Score {
      */
     update() {
         this.display.innerHTML = "Score: " + this.score + " <br> Highscore: " + this.highscore;
+    }
+
+    displayStyle(display) {
+        display.style.position = "absolute";
+        display.style.zIndex = "1";
+        display.style.left = "10px";
+        display.style.top = "10px";
+        display.style.width = "200px";
+        display.style.color = "white";
+        display.style.fontWeight = "bold";
+        display.style.fontFamily = "'Avenir',Helvetica,Arial,sans-serif";
     }
 }

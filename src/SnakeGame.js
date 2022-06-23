@@ -15,7 +15,8 @@ export default class SnakeGame {
      * @param {Object} config possible Values: int initLength, int gridSize, int initSpeed, float speedUp, 
      *      int speedLimit, Object color {String bgColor, String bodyColor, String headColor}
      */
-    constructor(parent, config) {Coord.collides
+    constructor(parent, config) {
+        this.parent = parent;
         this.DBIRED = "#EE2E31";
         this.DBIBLUE = "#1E345A";
         this.DBIWHITE = "#FFFFFF"; //TODO checken ob es wirklich FFFFFF ist
@@ -26,23 +27,27 @@ export default class SnakeGame {
         this.SPEEDUP = config.speedUp ?? 1.05;
         this.SPEEDLIMIT = config.speedLimit ?? 50;
 
-        this.field = new Field(parent, this.GRIDSIZE, this.BGCOLOR);
+        this.field = new Field(parent, this.GRIDSIZE, this.BGCOLOR, function (){this.hide();}, function (){this.hide();});
+
         this.snake = new Snake(config.initLength ?? 3, this.GRIDSIZE, config.headColor ?? this.DBIWHITE, config.headcolor ?? "grey");
 
         this.renderBody();
         this.placeFood();
 
         document.addEventListener("keydown", this.keyDownHandler.bind(this), false);
+        //this.field.endScreen.show();
+        
+        this.running = true;
     }
     /**
      * starts the game
      */
     async start() {
-        while (true) {
+        while (this.running) {
             // console.log(this.key);
             this.snake.move(this.key.shift());
             if (this.checkBodyCollision()) {
-                this.gameOver();
+                await this.gameOver();
             } else if (this.checkFoodCollision()) {
                 this.field.score.set(this.snake.body.length - (this.snake.initLength));
                 //Speedup
@@ -109,16 +114,15 @@ export default class SnakeGame {
     /**
      * handles what happens at the end of a game
      */
-    gameOver() {
-        // console.log(this.snake.body.length + "-" + this.snake.initLength);
+    async gameOver() {
         this.field.score.set(this.snake.body.length - (this.snake.initLength + 1));
-        if (this.field.score.score > this.field.score.highscore) {
-            alert("GAME OVER!!! \nScore: " + this.field.score.score + "\nNEW HIGHSCORE!!! \nPrevious Highscore: " + this.field.score.highscore);
+
+        this.field.endScreen.setText(parseInt(this.field.score.score), parseInt(this.field.score.highscore));
+        this.field.endScreen.show();
+        if (parseInt(this.field.score.score) > parseInt(this.field.score.highscore)) {
             this.field.score.setHighscore(this.field.score.score);
         }
-        else {
-            alert("GAME OVER!!! \nScore: " + this.field.score.score + "\nHighscore: " + this.field.score.highscore);
-        }
+
         //Restart
         let discard = this.snake.body.slice(this.snake.initLength, this.snake.body.length);
         discard.forEach(segment => {
@@ -129,7 +133,10 @@ export default class SnakeGame {
         this.key = [];
         this.field.score.set(0);
         this.field.score.update();
+        return;
     }
+
+    
 
 
     /**

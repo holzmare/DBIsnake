@@ -1,5 +1,6 @@
 import Score from "./Score.js";
 import Coord from "./Coord.js";
+import EndScreen from "./EndScreen.js";
 /**
  * implements a playing field as an HTML-canvas
  */
@@ -13,16 +14,24 @@ import Coord from "./Coord.js";
      * @param {DOM-element} parentObj parent element the canvas should be a child of
      * @param {int} gridsize Amount of rows and columns the field should have
      * @param {String} bgcolor the fields color
+     * @param {function} onReplayButtonCick functionality for replayButton in EndScreen
+     * @param {function} onExitButtonClick functionality for exitButton in EndScreen
+     }}
      */
-    constructor(parentObj, gridsize, bgcolor) {
+    constructor(parentObj, gridsize, bgcolor, onReplayButtonCick, onExitButtonClick) {
         this.gridsize = gridsize;
         this.bgcolor = bgcolor;
         this.context = this.canvas.getContext("2d");
+        
         this.canvas.webkitImageSmoothingEnabled = false;
         this.canvas.mozImageSmoothingEnabled = false;
         this.canvas.imageSmoothingEnabled = false;
+
+        this.canvas.style.position = "absolute";
+        this.canvas.style.top = 0;
+
         this.container.width = 100;
-        this.container.setAttribute("style", "height:100%;");
+        this.container.setAttribute("style", "position: relative; height:100%;");
         parentObj.insertBefore(this.container, parentObj.childNodes[0]);
         // console.log("container height: " + this.container.clientHeight);
         if (this.container.clientWidth == 0 || this.container.clientHeight == 0) {
@@ -32,12 +41,15 @@ import Coord from "./Coord.js";
         } else {
             this.stepWidth = Math.floor(Math.min(this.container.clientWidth, this.container.clientHeight) / this.gridsize);
         }
-        this.canvas.width = this.stepWidth * this.gridsize;
-        this.canvas.height = this.stepWidth * this.gridsize;
+        this.size = this.stepWidth * this.gridsize;
+        this.canvas.width = this.size;
+        this.canvas.height = this.size;
         this.score = new Score(this.container);
-        this.container.insertBefore(this.canvas, this.container.childNodes[0]);
+        this.container.appendChild(this.canvas);
         this.context.fillStyle = this.bgcolor;
         this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
+        
+        this.endScreen = new EndScreen(this.container, this.size, onReplayButtonCick, onExitButtonClick);
 
         window.addEventListener("resize", this.resizeCanvas.bind(this), false);
     };
@@ -46,10 +58,11 @@ import Coord from "./Coord.js";
      * handles resize event
      */
     resizeCanvas() {
-        let newSize = Math.floor(Math.min(this.container.clientWidth, this.container.clientHeight) / this.gridsize) * this.gridsize;
+        this.size = Math.floor(Math.min(this.container.clientWidth, this.container.clientHeight) / this.gridsize) * this.gridsize;
         // console.log(newSize);
-        this.canvas.style.height = newSize + "px";
-        this.canvas.style.width = newSize + "px";
+        this.canvas.style.height = this.size + "px";
+        this.canvas.style.width = this.size + "px";
+        this.endScreen.resize(this.size);
     };
 
     /**
