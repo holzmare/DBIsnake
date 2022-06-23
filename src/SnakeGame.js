@@ -27,16 +27,19 @@ export default class SnakeGame {
         this.SPEEDUP = config.speedUp ?? 1.05;
         this.SPEEDLIMIT = config.speedLimit ?? 50;
 
-        this.field = new Field(parent, this.GRIDSIZE, this.BGCOLOR, function (){this.hide();}, function (){this.hide();});
+        this.field = new Field(parent, this.GRIDSIZE, this.BGCOLOR, ()=>{
+            this.field.endScreen.hide();
+            this.running = true;
+            this.start();
+        }, ()=>{this.destroy()});
 
         this.snake = new Snake(config.initLength ?? 3, this.GRIDSIZE, config.headColor ?? this.DBIWHITE, config.headcolor ?? "grey");
 
         this.renderBody();
         this.placeFood();
 
-        document.addEventListener("keydown", this.keyDownHandler.bind(this), false);
-        //this.field.endScreen.show();
-        
+        this.keyDownHandlerBound = this.keyDownHandler.bind(this);
+        document.addEventListener("keydown", this.keyDownHandlerBound, false);        
         this.running = true;
     }
     /**
@@ -47,7 +50,7 @@ export default class SnakeGame {
             // console.log(this.key);
             this.snake.move(this.key.shift());
             if (this.checkBodyCollision()) {
-                await this.gameOver();
+                this.gameOver();
             } else if (this.checkFoodCollision()) {
                 this.field.score.set(this.snake.body.length - (this.snake.initLength));
                 //Speedup
@@ -114,7 +117,8 @@ export default class SnakeGame {
     /**
      * handles what happens at the end of a game
      */
-    async gameOver() {
+    gameOver() {        
+        this.running = false;
         this.field.score.set(this.snake.body.length - (this.snake.initLength + 1));
 
         this.field.endScreen.setText(parseInt(this.field.score.score), parseInt(this.field.score.highscore));
@@ -133,7 +137,6 @@ export default class SnakeGame {
         this.key = [];
         this.field.score.set(0);
         this.field.score.update();
-        return;
     }
 
     
@@ -185,6 +188,7 @@ export default class SnakeGame {
      * cleans up handlers
      */
     destroy() {
-        document.removeEventListener("keydown", this.keyDownHandler, false);
+        document.removeEventListener("keydown", this.keyDownHandlerBound, false);
+        this.field.destroy();
     }
 }

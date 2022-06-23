@@ -50,8 +50,8 @@ import EndScreen from "./EndScreen.js";
         this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
         
         this.endScreen = new EndScreen(this.container, this.size, onReplayButtonCick, onExitButtonClick);
-
-        window.addEventListener("resize", this.resizeCanvas.bind(this), false);
+        this.resizeCanvasBound = this.resizeCanvas.bind(this);
+        window.addEventListener("resize", this.resizeCanvasBound, false);
     };
 
     /**
@@ -59,7 +59,7 @@ import EndScreen from "./EndScreen.js";
      */
     resizeCanvas() {
         this.size = Math.floor(Math.min(this.container.clientWidth, this.container.clientHeight) / this.gridsize) * this.gridsize;
-        // console.log(newSize);
+        //console.log(this.size);
         this.canvas.style.height = this.size + "px";
         this.canvas.style.width = this.size + "px";
         this.endScreen.resize(this.size);
@@ -89,6 +89,11 @@ import EndScreen from "./EndScreen.js";
         let dim = this.stepWidth;
         this.context.fillStyle = color;
         this.context.fillRect(point.x, point.y, dim, dim);
+    };
+
+    destroy() {
+        window.removeEventListener("resize", this.resizeCanvasBound, false);
+        this.container.remove();
     };
 
 }

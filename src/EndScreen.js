@@ -38,6 +38,8 @@
         this.exitButton.innerHTML = "Stop Playing!";
         this.exitButton.onclick = onExitButtonClick.bind(this);
 
+        this.hide();
+
     }
 
     resize(size){
