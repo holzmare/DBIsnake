@@ -26,6 +26,8 @@ export default class SnakeGame {
         this.tickrate = this.INITSPEED;
         this.SPEEDUP = config.speedUp ?? 1.05;
         this.SPEEDLIMIT = config.speedLimit ?? 50;
+        this.HEADCOLOR = config.headColor ?? "grey";
+        this.BODYCOLOR = config.bodyColor ?? this.DBIWHITE;
 
         this.field = new Field(parent, this.GRIDSIZE, this.BGCOLOR, ()=>{
             this.field.endScreen.hide();
@@ -33,7 +35,7 @@ export default class SnakeGame {
             this.start();
         }, ()=>{this.destroy()});
 
-        this.snake = new Snake(config.initLength ?? 3, this.GRIDSIZE, config.headColor ?? this.DBIWHITE, config.headcolor ?? "grey");
+        this.snake = new Snake(config.initLength ?? 3, this.GRIDSIZE, this.BODYCOLOR, this.HEADCOLOR);
 
         this.renderBody();
         this.placeFood();
@@ -51,6 +53,7 @@ export default class SnakeGame {
             this.snake.move(this.key.shift());
             if (this.checkBodyCollision()) {
                 this.gameOver();
+                return;
             } else if (this.checkFoodCollision()) {
                 this.field.score.set(this.snake.body.length - (this.snake.initLength));
                 //Speedup
