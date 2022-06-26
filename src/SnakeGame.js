@@ -28,6 +28,7 @@ export default class SnakeGame {
         this.SPEEDLIMIT = config.speedLimit ?? 50;
         this.HEADCOLOR = config.headColor ?? "grey";
         this.BODYCOLOR = config.bodyColor ?? this.DBIWHITE;
+        this.INITLENGTH = config.initLength ?? 3;
 
         this.field = new Field(parent, this.GRIDSIZE, this.BGCOLOR, ()=>{
             this.field.endScreen.hide();
@@ -35,10 +36,6 @@ export default class SnakeGame {
             this.start();
         }, ()=>{this.destroy()});
 
-        this.snake = new Snake(config.initLength ?? 3, this.GRIDSIZE, this.BODYCOLOR, this.HEADCOLOR);
-
-        this.renderBody();
-        this.placeFood();
 
         this.keyDownHandlerBound = this.keyDownHandler.bind(this);
         document.addEventListener("keydown", this.keyDownHandlerBound, false);        
@@ -48,6 +45,14 @@ export default class SnakeGame {
      * starts the game
      */
     async start() {
+        this.field.clear();
+        this.snake = new Snake(this.INITLENGTH, this.GRIDSIZE, this.BODYCOLOR, this.HEADCOLOR); // TODO: move this into start() function, so snake can't automatically crash when restarting
+        this.renderBody();
+        this.placeFood();        
+        this.key = [];
+        this.field.score.set(0);
+        this.field.score.update();
+
         while (this.running) {
             // console.log(this.key);
             this.snake.move(this.key.shift());
@@ -129,17 +134,7 @@ export default class SnakeGame {
         if (parseInt(this.field.score.score) > parseInt(this.field.score.highscore)) {
             this.field.score.setHighscore(this.field.score.score);
         }
-
-        //Restart
-        let discard = this.snake.body.slice(this.snake.initLength, this.snake.body.length);
-        discard.forEach(segment => {
-            this.field.renderSegment(segment, this.BGCOLOR);
-        });
         this.tickrate = this.INITSPEED;
-        this.snake.body = this.snake.body.slice(0, this.snake.initLength);
-        this.key = [];
-        this.field.score.set(0);
-        this.field.score.update();
     }
 
     

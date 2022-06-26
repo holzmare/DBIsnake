@@ -47,12 +47,16 @@ import EndScreen from "./EndScreen.js";
         this.score = new Score(this.container);
         this.container.appendChild(this.canvas);
         this.context.fillStyle = this.bgcolor;
-        this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
+        this.clear();
         
         this.endScreen = new EndScreen(this.container, this.size, onReplayButtonCick, onExitButtonClick);
         this.resizeCanvasBound = this.resizeCanvas.bind(this);
         window.addEventListener("resize", this.resizeCanvasBound, false);
     };
+
+     clear() {
+         this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
+     }
 
     /**
      * handles resize event
