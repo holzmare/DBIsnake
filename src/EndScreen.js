@@ -9,9 +9,7 @@
 
         this.container = document.createElement("div");
         this.parentObj.insertBefore(this.container, this.parentObj.childNodes[0]);
-        this.container.setAttribute("style", "position: relative; z-index: 2; display: grid; place-items: center; background-color: rgba(0,0,0,0.3);");
-        this.container.style.height = size + "px";
-        this.container.style.width = size + "px";
+        this.containerStyle(this.container, size);
 
         this.content = document.createElement("div");
         this.container.appendChild(this.content);
@@ -100,6 +98,16 @@
         content.style.fontWeight = "bold";
         content.style.fontSize = "5vmin";
         content.style.fontFamily = "'Avenir',Helvetica,Arial,sans-serif";
+    }
+
+    containerStyle(container, size){
+        container.style.position = "relative";
+        container.style.display = "grid";
+        container.style.zIndex = "2";
+        container.style.placeItems = "center";
+        container.backgroundColor = "rgba(0,0,0,0.3)";
+        this.container.style.height = size + "px";
+        this.container.style.width = size + "px";
     }
 
 }

@@ -16,6 +16,21 @@ export default class SnakeGame {
      *      int speedLimit, Object color {String bgColor, String bodyColor, String headColor}
      */
     constructor(parent, config) {
+        this.loadConfiguration(parent, config);
+
+        this.field = new Field(parent, this.GRIDSIZE, this.BGCOLOR, ()=>{
+            this.field.endScreen.hide();
+            this.running = true;
+            this.start();
+        }, ()=>{this.destroy()});
+
+
+        this.keyDownHandlerBound = this.keyDownHandler.bind(this);
+        document.addEventListener("keydown", this.keyDownHandlerBound, false);        
+        this.running = true;
+    }
+    
+    loadConfiguration(parent, config) {
         this.parent = parent;
         this.DBIRED = "#EE2E31";
         this.DBIBLUE = "#1E345A";
@@ -29,18 +44,8 @@ export default class SnakeGame {
         this.HEADCOLOR = config.headColor ?? "grey";
         this.BODYCOLOR = config.bodyColor ?? this.DBIWHITE;
         this.INITLENGTH = config.initLength ?? 3;
-
-        this.field = new Field(parent, this.GRIDSIZE, this.BGCOLOR, ()=>{
-            this.field.endScreen.hide();
-            this.running = true;
-            this.start();
-        }, ()=>{this.destroy()});
-
-
-        this.keyDownHandlerBound = this.keyDownHandler.bind(this);
-        document.addEventListener("keydown", this.keyDownHandlerBound, false);        
-        this.running = true;
     }
+
     /**
      * starts the game
      */

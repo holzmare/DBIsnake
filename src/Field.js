@@ -31,7 +31,8 @@ import EndScreen from "./EndScreen.js";
         this.canvas.style.top = 0;
 
         this.container.width = 100;
-        this.container.setAttribute("style", "position: relative; height:100%;");
+        this.container.style.position = "relative";
+        this.container.style.height = "100%";
         parentObj.insertBefore(this.container, parentObj.childNodes[0]);
         // console.log("container height: " + this.container.clientHeight);
         if (this.container.clientWidth == 0 || this.container.clientHeight == 0) {
