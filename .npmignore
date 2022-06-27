@@ -2,6 +2,6 @@
 *
 
 #except for
-!src/*
-!index.js
+!lib/*
+#!index.js
 !LICENSE.js
