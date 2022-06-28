@@ -5,8 +5,6 @@ import EndScreen from "./EndScreen.js";
  * implements a playing field as an HTML-canvas
  */
  export default class Field {
-    container = document.createElement("div");
-    canvas = document.createElement("canvas");
     stepWidth;
     /**
      * creates a canvas to fit available space
@@ -21,19 +19,12 @@ import EndScreen from "./EndScreen.js";
     constructor(parentObj, gridsize, bgcolor, onReplayButtonCick, onExitButtonClick) {
         this.gridsize = gridsize;
         this.bgcolor = bgcolor;
-        this.context = this.canvas.getContext("2d");
-        
-        this.canvas.webkitImageSmoothingEnabled = false;
-        this.canvas.mozImageSmoothingEnabled = false;
-        this.canvas.imageSmoothingEnabled = false;
 
-        this.canvas.style.position = "absolute";
-        this.canvas.style.top = 0;
+        this.container = document.createElement("div");
+        this.containerStyle();
 
-        this.container.width = 100;
-        this.container.style.position = "relative";
-        this.container.style.height = "100%";
-        parentObj.insertBefore(this.container, parentObj.childNodes[0]);
+
+        parentObj.appendChild(this.container);
         // console.log("container height: " + this.container.clientHeight);
         if (this.container.clientWidth == 0 || this.container.clientHeight == 0) {
             console.log("Parent has no fixed size, using 400px as default.");
@@ -43,17 +34,42 @@ import EndScreen from "./EndScreen.js";
             this.stepWidth = Math.floor(Math.min(this.container.clientWidth, this.container.clientHeight) / this.gridsize);
         }
         this.size = this.stepWidth * this.gridsize;
-        this.canvas.width = this.size;
-        this.canvas.height = this.size;
-        this.score = new Score(this.container);
+        
+        this.canvas = document.createElement("canvas");
+
+        this.canvasStyle();
+
         this.container.appendChild(this.canvas);
+
+        this.context = this.canvas.getContext("2d");
         this.context.fillStyle = this.bgcolor;
         this.clear();
+
+        this.score = new Score(this.container);
         
         this.endScreen = new EndScreen(this.container, this.size, onReplayButtonCick, onExitButtonClick);
         this.resizeCanvasBound = this.resizeCanvas.bind(this);
         window.addEventListener("resize", this.resizeCanvasBound, false);
     };
+
+     canvasStyle() {
+         this.canvas.style.position = "absolute";
+         this.canvas.style.top = 0;
+         this.canvas.width = this.size;
+         this.canvas.height = this.size;
+
+         this.canvas.webkitImageSmoothingEnabled = false;
+         this.canvas.mozImageSmoothingEnabled = false;
+         this.canvas.imageSmoothingEnabled = false;
+     }
+
+     containerStyle() {
+         this.container.width = 100;
+         this.container.style.position = "relative";
+         this.container.style.height = "100%";
+         this.container.style.display = "grid";
+         this.container.style.alignItems = "center";
+     }
 
      clear() {
          this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
