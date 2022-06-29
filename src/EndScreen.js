@@ -2,9 +2,9 @@
  * implements an Overlay that contains a Score Display and controls to restart the game
  */
  export default class EndScreen {
-    highscore = 0;
-    score = 0;
     constructor(parentObj, size, onReplayButtonCick=this.onReplayButtonCick, onExitButtonClick=this.onExitButtonClick) {     
+        this.highscore = 0;
+        this.score = 0;
         this.parentObj = parentObj;
 
         this.container = document.createElement("div");

@@ -64,7 +64,7 @@ import EndScreen from "./EndScreen.js";
      }
 
      containerStyle() {
-         this.container.width = 100;
+         this.container.style.width = "100%";
          this.container.style.position = "relative";
          this.container.style.height = "100%";
          this.container.style.display = "grid";

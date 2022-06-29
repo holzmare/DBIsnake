@@ -65,5 +65,6 @@ export default class Score {
         display.style.color = "white";
         display.style.fontWeight = "bold";
         display.style.fontFamily = "'Avenir',Helvetica,Arial,sans-serif";
+        display.style.textAlign = "left";
     }
 }
