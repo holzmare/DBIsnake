@@ -2,7 +2,7 @@
   "name": "dbi-snake",
   "version": "1.1.0",
   "description": "An open source \"Snake\"-game implementation in pure JavaScript",
-  "main": "./lib/SnakeGame.js",
+  "main": "./modules/SnakeGame.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "npm run dev",
@@ -28,7 +28,6 @@
     "@babel/cli": "^7.17.10",
     "@babel/core": "^7.18.5",
     "@babel/preset-env": "^7.18.2",
-    "babel-cli": "^6.26.0",
     "http-server": "^14.1.1"
   }
 }
