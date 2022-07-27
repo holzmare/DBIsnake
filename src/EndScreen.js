@@ -14,7 +14,7 @@
         this.content = document.createElement("div");
         this.container.appendChild(this.content);
         this.contentStyle(this.content);
-        this.content.innerHTML = "<h2 style='margin: 2%'>GAME OVER!</h2>";
+        this.content.innerHTML = "<h2>GAME OVER!</h2>";
 
         this.text = document.createElement("span");
         this.content.appendChild(this.text);
@@ -22,6 +22,7 @@
         this.setText(0, 0);
 
         this.buttons = document.createElement("span");
+        this.buttonsStyle(this.buttons);
         this.content.appendChild(this.buttons);
 
         this.replayButton = document.createElement("button");
@@ -43,6 +44,7 @@
     resize(size){
         this.container.style.height = size + "px";
         this.container.style.width = size + "px";
+        this.container.style.fontSize = size/20 + "px";
     }
 
     setText(score, highscore) {
@@ -70,33 +72,38 @@
         this.hide();
     }
 
+    buttonsStyle(buttons){
+        buttons.style.whiteSpace = "nowrap";
+    }
+
     buttonStyle(button, color){
-        button.style.margin = "2vmin";
+        button.style.margin = "1.5%";
         button.style.border = "2px";
         button.style.borderStyle = "solid"
         button.style.backgroundColor = color;
         button.style.borderColor = "white";
         button.style.color = "white";
-        button.style.padding = "1vmin";
+        button.style.padding = "1.5%";
         button.style.textAlign = "center";
         button.style.textDecoration = "none";
         button.style.display = "inline-block";
-        button.style.fontSize = "3vmin";
+        button.style.fontSize = ".75em";
         button.style.cursor = "pointer";
         button.fontFamily = "'Avenir',Helvetica,Arial,sans-serif"
     }
 
     contentStyle(content){
         content.style.position = "relative";
-        content.style.display = "grid";
-        content.style.placeItems = "center";
+        content.style.display = "flex";
+        content.style.flexDirection = "column";
+        content.style.justifyContent = "center";
         content.style.width = "80%";
         content.style.height = "50%";
         content.style.backgroundColor = "#1E345A";
         content.style.color = "white";
-        content.style.border = "8px solid #FFF";
+        content.style.border = "6px solid #FFF";
         content.style.fontWeight = "bold";
-        content.style.fontSize = "5vmin";
+        content.style.fontSize = "1.1em";
         content.style.fontFamily = "'Avenir',Helvetica,Arial,sans-serif";
     }
 
@@ -106,8 +113,7 @@
         container.style.zIndex = "2";
         container.style.placeItems = "center";
         container.backgroundColor = "rgba(0,0,0,0.3)";
-        this.container.style.height = size + "px";
-        this.container.style.width = size + "px";
+        this.resize(size);
     }
 
 }

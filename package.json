@@ -6,9 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "npm run dev",
-    "bundle": "esbuild src/SnakeGame.js --bundle --outfile=bundle/main.js --loader:.html=text",
+    "bundle": "esbuild src/SnakeGame.js --bundle --outfile=bundle/main.js --loader:.html=text --format=cjs",
     "babel": "babel bundle -d lib",
-    "package": "npm run bundle babel",
+    "package": "npm run bundle && npm run babel",
     "dev": "http-server ./ -a localhost -p 1234 -o /index.html"
   },
   "repository": {

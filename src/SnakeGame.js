@@ -11,11 +11,15 @@ export default class SnakeGame {
     key = [];
     /**
      * 
+     * initializes the game, game state can be tracked with the state variable (0 = init, 1 = running, 2 = game over, 3 = exited)
+     * 
      * @param {HTMLElement} parent Game will be initialized as first child of this element
      * @param {Object} config possible Values: int initLength, int gridSize, int initSpeed, float speedUp, 
      *      int speedLimit, Object color {String bgColor, String bodyColor, String headColor}
+     * 
      */
     constructor(parent, config) {
+        this.state = 0 // 0 = init, 1 = running, 2 = game over, 3 = exited
         this.loadConfiguration(parent, config);
 
         this.field = new Field(parent, this.GRIDSIZE, this.BGCOLOR, ()=>{
@@ -50,6 +54,7 @@ export default class SnakeGame {
      * starts the game
      */
     async start() {
+        this.state = 1;
         this.field.clear();
         this.snake = new Snake(this.INITLENGTH, this.GRIDSIZE, this.BODYCOLOR, this.HEADCOLOR); // TODO: move this into start() function, so snake can't automatically crash when restarting
         this.renderBody();
@@ -130,7 +135,8 @@ export default class SnakeGame {
     /**
      * handles what happens at the end of a game
      */
-    gameOver() {        
+    gameOver() {
+        this.state = 2;
         this.running = false;
         this.field.score.set(this.snake.body.length - (this.snake.initLength + 1));
 
@@ -193,5 +199,6 @@ export default class SnakeGame {
     destroy() {
         document.removeEventListener("keydown", this.keyDownHandlerBound, false);
         this.field.destroy();
+        this.state = 3
     }
 }

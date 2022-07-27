@@ -4,7 +4,7 @@ import EndScreen from "./EndScreen.js";
 /**
  * implements a playing field as an HTML-canvas
  */
- export default class Field {
+export default class Field {
     stepWidth;
     /**
      * creates a canvas to fit available space
@@ -34,7 +34,7 @@ import EndScreen from "./EndScreen.js";
             this.stepWidth = Math.floor(Math.min(this.container.clientWidth, this.container.clientHeight) / this.gridsize);
         }
         this.size = this.stepWidth * this.gridsize;
-        
+
         this.canvas = document.createElement("canvas");
 
         this.canvasStyle();
@@ -42,38 +42,38 @@ import EndScreen from "./EndScreen.js";
         this.container.appendChild(this.canvas);
 
         this.context = this.canvas.getContext("2d");
-        this.context.fillStyle = this.bgcolor;
         this.clear();
 
         this.score = new Score(this.container);
-        
+
         this.endScreen = new EndScreen(this.container, this.size, onReplayButtonCick, onExitButtonClick);
         this.resizeCanvasBound = this.resizeCanvas.bind(this);
         window.addEventListener("resize", this.resizeCanvasBound, false);
     };
 
-     canvasStyle() {
-         this.canvas.style.position = "absolute";
-         this.canvas.style.top = 0;
-         this.canvas.width = this.size;
-         this.canvas.height = this.size;
+    canvasStyle() {
+        this.canvas.style.position = "absolute";
+        this.canvas.style.top = 0;
+        this.canvas.width = this.size;
+        this.canvas.height = this.size;
 
-         this.canvas.webkitImageSmoothingEnabled = false;
-         this.canvas.mozImageSmoothingEnabled = false;
-         this.canvas.imageSmoothingEnabled = false;
-     }
+        this.canvas.webkitImageSmoothingEnabled = false;
+        this.canvas.mozImageSmoothingEnabled = false;
+        this.canvas.imageSmoothingEnabled = false;
+    }
 
-     containerStyle() {
-         this.container.style.width = "100%";
-         this.container.style.position = "relative";
-         this.container.style.height = "100%";
-         this.container.style.display = "grid";
-         this.container.style.alignItems = "center";
-     }
+    containerStyle() {
+        this.container.style.width = "100%";
+        this.container.style.position = "relative";
+        this.container.style.height = "100%";
+        this.container.style.display = "flex";
+        this.container.style.justifyContent = "center";
+    }
 
-     clear() {
-         this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
-     }
+    clear() {
+        this.context.fillStyle = this.bgcolor;
+        this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    }
 
     /**
      * handles resize event
