@@ -11,11 +11,31 @@ export default class SnakeGame {
     key = [];
     /**
      * 
+     * initializes the game, game status can be tracked with the status variable (0 = destroyed, 1 = init, 2 = running, 3 = game over, )
+     * 
      * @param {HTMLElement} parent Game will be initialized as first child of this element
      * @param {Object} config possible Values: int initLength, int gridSize, int initSpeed, float speedUp, 
      *      int speedLimit, Object color {String bgColor, String bodyColor, String headColor}
+     * 
      */
-    constructor(parent, config) {Coord.collides
+    constructor(parent, config) {
+        this.status = 1 // 1 = preinit, 2 = running, 3 = game over, 3 = exited
+        this.loadConfiguration(parent, config);
+
+        this.field = new Field(parent, this.GRIDSIZE, this.BGCOLOR, ()=>{
+            this.field.endScreen.hide();
+            this.running = true;
+            this.start();
+        }, ()=>{this.destroy()});
+
+
+        this.keyDownHandlerBound = this.keyDownHandler.bind(this);
+        document.addEventListener("keydown", this.keyDownHandlerBound, false);        
+        this.running = true;
+    }
+    
+    loadConfiguration(parent, config) {
+        this.parent = parent;
         this.DBIRED = "#EE2E31";
         this.DBIBLUE = "#1E345A";
         this.DBIWHITE = "#FFFFFF"; //TODO checken ob es wirklich FFFFFF ist
@@ -25,24 +45,31 @@ export default class SnakeGame {
         this.tickrate = this.INITSPEED;
         this.SPEEDUP = config.speedUp ?? 1.05;
         this.SPEEDLIMIT = config.speedLimit ?? 50;
-
-        this.field = new Field(parent, this.GRIDSIZE, this.BGCOLOR);
-        this.snake = new Snake(config.initLength ?? 3, this.GRIDSIZE, config.headColor ?? this.DBIWHITE, config.headcolor ?? "grey");
-
-        this.renderBody();
-        this.placeFood();
-
-        document.addEventListener("keydown", this.keyDownHandler.bind(this), false);
+        this.HEADCOLOR = config.headColor ?? "grey";
+        this.BODYCOLOR = config.bodyColor ?? this.DBIWHITE;
+        this.INITLENGTH = config.initLength ?? 3;
     }
+
     /**
      * starts the game
      */
     async start() {
-        while (true) {
+        this.field.clear();
+        this.snake = new Snake(this.INITLENGTH, this.GRIDSIZE, this.BODYCOLOR, this.HEADCOLOR); // TODO: move this into start() function, so snake can't automatically crash when restarting
+        this.renderBody();
+        this.placeFood();        
+        this.key = [];
+        this.field.score.set(0);
+        this.field.score.update();
+        
+        this.status = 2;
+
+        while (this.running) {
             // console.log(this.key);
             this.snake.move(this.key.shift());
             if (this.checkBodyCollision()) {
                 this.gameOver();
+                return;
             } else if (this.checkFoodCollision()) {
                 this.field.score.set(this.snake.body.length - (this.snake.initLength));
                 //Speedup
@@ -110,26 +137,19 @@ export default class SnakeGame {
      * handles what happens at the end of a game
      */
     gameOver() {
-        // console.log(this.snake.body.length + "-" + this.snake.initLength);
+        this.running = false;
         this.field.score.set(this.snake.body.length - (this.snake.initLength + 1));
-        if (this.field.score.score > this.field.score.highscore) {
-            alert("GAME OVER!!! \nScore: " + this.field.score.score + "\nNEW HIGHSCORE!!! \nPrevious Highscore: " + this.field.score.highscore);
+
+        this.field.endScreen.setText(parseInt(this.field.score.score), parseInt(this.field.score.highscore));
+        this.field.endScreen.show();
+        if (parseInt(this.field.score.score) > parseInt(this.field.score.highscore)) {
             this.field.score.setHighscore(this.field.score.score);
         }
-        else {
-            alert("GAME OVER!!! \nScore: " + this.field.score.score + "\nHighscore: " + this.field.score.highscore);
-        }
-        //Restart
-        let discard = this.snake.body.slice(this.snake.initLength, this.snake.body.length);
-        discard.forEach(segment => {
-            this.field.renderSegment(segment, this.BGCOLOR);
-        });
         this.tickrate = this.INITSPEED;
-        this.snake.body = this.snake.body.slice(0, this.snake.initLength);
-        this.key = [];
-        this.field.score.set(0);
-        this.field.score.update();
+        this.status = 3;
     }
+
+    
 
 
     /**
@@ -178,6 +198,8 @@ export default class SnakeGame {
      * cleans up handlers
      */
     destroy() {
-        document.removeEventListener("keydown", this.keyDownHandler, false);
+        document.removeEventListener("keydown", this.keyDownHandlerBound, false);
+        this.field.destroy();
+        this.status = 0
     }
 }
