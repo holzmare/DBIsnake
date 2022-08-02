@@ -3,14 +3,17 @@
  */
  export default class EndScreen {
     constructor(parentObj, size, onReplayButtonCick=this.onReplayButtonCick, onExitButtonClick=this.onExitButtonClick) {     
+        // Initialize variables
         this.highscore = 0;
         this.score = 0;
         this.parentObj = parentObj;
 
+        // create and style container element
         this.container = document.createElement("div");
         this.parentObj.insertBefore(this.container, this.parentObj.childNodes[0]);
         this.containerStyle(this.container, size);
-
+        
+        // create, style and fill the content element
         this.content = document.createElement("div");
         this.container.appendChild(this.content);
         this.contentStyle(this.content);
@@ -21,21 +24,25 @@
         
         this.setText(0, 0);
 
+        // create button section
         this.buttons = document.createElement("span");
-        this.buttonsStyle(this.buttons);
-        this.content.appendChild(this.buttons);
 
         this.replayButton = document.createElement("button");
-        this.buttonStyle(this.replayButton, "#EE2E31");
-        this.buttons.appendChild(this.replayButton);
         this.replayButton.innerHTML = "Play Again!";
         this.replayButton.onclick = onReplayButtonCick.bind(this);
 
         this.exitButton = document.createElement("button");
-        this.buttonStyle(this.exitButton, "#1E345A")
-        this.buttons.appendChild(this.exitButton);
         this.exitButton.innerHTML = "Stop Playing!";
         this.exitButton.onclick = onExitButtonClick.bind(this);
+        
+        this.buttonsStyle(this.buttons);
+        this.buttonStyle(this.exitButton, "#1E345A");
+        this.buttonStyle(this.replayButton, "#EE2E31");
+        
+        this.content.appendChild(this.buttons);
+        this.buttons.appendChild(this.replayButton);
+        this.buttons.appendChild(this.exitButton);
+        
 
         this.hide();
 
