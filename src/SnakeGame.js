@@ -19,7 +19,7 @@ export default class SnakeGame {
      * 
      */
     constructor(parent, config) {
-        this.status = 1 // 1 = init, 2 = running, 3 = game over, 3 = exited
+        this.status = 1 // 1 = preinit, 2 = running, 3 = game over, 3 = exited
         this.loadConfiguration(parent, config);
 
         this.field = new Field(parent, this.GRIDSIZE, this.BGCOLOR, ()=>{
@@ -54,7 +54,6 @@ export default class SnakeGame {
      * starts the game
      */
     async start() {
-        this.status = 2;
         this.field.clear();
         this.snake = new Snake(this.INITLENGTH, this.GRIDSIZE, this.BODYCOLOR, this.HEADCOLOR); // TODO: move this into start() function, so snake can't automatically crash when restarting
         this.renderBody();
@@ -62,6 +61,8 @@ export default class SnakeGame {
         this.key = [];
         this.field.score.set(0);
         this.field.score.update();
+        
+        this.status = 2;
 
         while (this.running) {
             // console.log(this.key);
@@ -136,7 +137,6 @@ export default class SnakeGame {
      * handles what happens at the end of a game
      */
     gameOver() {
-        this.status = 3;
         this.running = false;
         this.field.score.set(this.snake.body.length - (this.snake.initLength + 1));
 
@@ -146,6 +146,7 @@ export default class SnakeGame {
             this.field.score.setHighscore(this.field.score.score);
         }
         this.tickrate = this.INITSPEED;
+        this.status = 3;
     }
 
     
