@@ -1,16 +1,40 @@
 <!DOCTYPE html>
+
 <html>
-    <title>DBIsnake</title>
-<body onload="main();" style="height:100vh">
+<title>DBIsnake</title>
+
+<script type="module">
+    import SnakeGame from './src/SnakeGame.js';
+    let config = {
+        "initLength": 2,
+        "gridSize": 5,
+        "initSpeed": 500,
+        "speedUp": 1.2,
+        "speedLimit": 50,
+        "bgColor": "black",
+        "bodyColor": "blue",
+        "headColor": "yellow"
+    };
+    async function main() {
+        let game = new SnakeGame(document.body, config);
+        await game.start();
+        //game.destroy();
+    };
+
+    main();
+</script>
+
+<body style="height:100vh">
 
 </body>
-
-<script type="text/javascript" src="./js/snake.js">
-</script>
 <style>
-    html, body, div, canvas {
-    margin: 0;
-    padding: 0;
-}
+    html,
+    body,
+    div,
+    canvas {
+        margin: 0;
+        padding: 0;
+    }
 </style>
+
 </html>

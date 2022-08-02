@@ -1,0 +1,7 @@
+# ignore everything
+*
+
+#except for
+!src/*
+!index.js
+!LICENSE.js
