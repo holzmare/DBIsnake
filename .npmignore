@@ -3,5 +3,5 @@
 
 #except for
 !lib/*
-#!index.js
 !LICENSE.js
+!README.md
