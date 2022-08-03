@@ -34,7 +34,7 @@ export default class SnakeGame {
         this.running = true;
     }
     
-    loadConfiguration(parent, config) {
+    loadConfiguration(parent, config={}) {
         this.parent = parent;
         this.DBIRED = "#EE2E31";
         this.DBIBLUE = "#1E345A";
